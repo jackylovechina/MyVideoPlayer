@@ -1,4 +1,4 @@
-package com.my.myvideoplayer.adapter;
+package com.my.myvideoplayer.Adapter;
 
 import android.content.Context;
 import android.view.LayoutInflater;
