@@ -1,9 +1,11 @@
 package com.my.myvideoplayer.Fragment;
 
+import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.app.DialogFragment;
 import android.content.DialogInterface;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.EditText;
@@ -19,6 +21,10 @@ public class ConfigDialog extends DialogFragment {
     private EditText mET_configIP;
     private EditText mET_configPort;
 
+    private SharedPreferences mSharedPreferences;
+    private SharedPreferences.Editor mEditer;
+
+
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
 
@@ -26,6 +32,9 @@ public class ConfigDialog extends DialogFragment {
         View view = getActivity().getLayoutInflater().inflate(R.layout.dialog_config, null);
         mET_configIP = (EditText) view.findViewById(R.id.et_config_IP);
         mET_configPort = (EditText) view.findViewById(R.id.et_config_port);
+
+        mSharedPreferences = getActivity().getSharedPreferences("Address", Activity.MODE_PRIVATE);
+        mEditer = mSharedPreferences.edit();
 
         mET_configIP.setText(GlobleVar.IP);
         mET_configPort.setText(GlobleVar.PORT);
@@ -41,6 +50,10 @@ public class ConfigDialog extends DialogFragment {
 
                 GlobleVar.IP = configIP;
                 GlobleVar.PORT = configPort;
+
+                mEditer.putString("IP", configIP);
+                mEditer.putString("Port", configPort);
+                mEditer.commit();
 
 
             }

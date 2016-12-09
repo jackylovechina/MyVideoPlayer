@@ -1,6 +1,8 @@
 package com.my.myvideoplayer;
 
+import android.app.Activity;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.net.Uri;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
@@ -27,6 +29,8 @@ import org.xutils.common.Callback;
 import org.xutils.http.RequestParams;
 import org.xutils.x;
 
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -38,6 +42,9 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
     private ListView mLV_mainVideoList;
     private SwipeRefreshLayout mSRL_mainRefresh;
 
+    private SharedPreferences mSharedPreferences;
+    private SharedPreferences.Editor mEditer;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -46,6 +53,12 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         mLV_mainVideoList = (ListView) findViewById(R.id.lv_main_videoList);
         mSRL_mainRefresh = (SwipeRefreshLayout) findViewById(R.id.srl_main_refresh);
         mSRL_mainRefresh.setOnRefreshListener(this);
+
+        mSharedPreferences = getSharedPreferences("Address", Activity.MODE_PRIVATE);
+        mEditer = mSharedPreferences.edit();
+
+        GlobleVar.IP = mSharedPreferences.getString("IP", null);
+        GlobleVar.PORT = mSharedPreferences.getString("Port", null);
 
         onRefresh();
 
@@ -114,9 +127,20 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
 
     @Override
     public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-        String str = videolist.get(i);
 
-        Uri uri = Uri.parse("http://" + GlobleVar.IP + ":" + GlobleVar.PORT + "/VideoList/videoes/" + str);
+        String str = videolist.get(i);
+        String url=null;
+
+        try {
+            str = URLEncoder.encode(str, "utf-8");
+            String str1=str.replaceAll("\\+","%20");
+            Log.d("str1",str1+str);
+            url = "http://" + GlobleVar.IP + ":" + GlobleVar.PORT + "/VideoList/videoes/" + str1;
+        } catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
+        }
+        Uri uri = Uri.parse(url);
+        Log.d("MyLog", url);
         Intent intent = new Intent(Intent.ACTION_VIEW);
         Log.v("URI:::::::::", uri.toString());
         intent.setDataAndType(uri, "video/mp4");
